@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#004053" />
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <title>HealthChat Prototype</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="features.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <img class="brand-logo" src="logo.png" alt="UPSSA - Université Privée de la Santé et des Sciences d'Agadir" width="131" height="48" />
+      <div class="app-title">
+        <h1>HealthChat</h1>
+        <p>General health information assistant</p>
+      </div>
+    </header>
+
+    <div class="disclaimer" role="note">
+      This assistant gives general information only. It is not a doctor and cannot
+      diagnose or treat. In an emergency, contact your local emergency services.
+    </div>
+
+    <nav class="toolbar" aria-label="Tools">
+      <button type="button" id="btn-nearby" class="tool-btn">📍 Find care near me</button>
+      <button type="button" id="btn-report" class="tool-btn">📄 Report for my doctor</button>
+    </nav>
+
+    <main id="chat" class="chat" aria-live="polite"></main>
+
+    <div id="typing" class="typing hidden">
+      <span></span><span></span><span></span>
+    </div>
+
+    <div id="attach-tray" class="attach-tray hidden" aria-live="polite"></div>
+    <div id="attach-note" class="attach-note hidden" aria-live="polite"></div>
+
+    <form id="chat-form" class="input-bar" autocomplete="off">
+      <button type="button" id="btn-attach" class="icon-btn" aria-label="Attach a photo or PDF (lab results, ECG...)" title="Attach a photo or PDF (lab results, ECG...)">📎</button>
+      <button type="button" id="btn-mic" class="icon-btn" aria-label="Speak your message" aria-pressed="false" title="Speak your message">🎤</button>
+      <select id="voice-lang" class="voice-lang" aria-label="Voice language" title="Voice language">
+        <option value="fr-FR">FR</option>
+        <option value="ar-MA">AR</option>
+        <option value="en-US">EN</option>
+      </select>
+      <textarea
+        id="message"
+        rows="1"
+        placeholder="Type your question..."
+        aria-label="Your message"
+      ></textarea>
+      <button type="submit" id="send" aria-label="Send">Send</button>
+    </form>
+  </div>
+
+  <!-- Find care near me -->
+  <div id="nearby-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="nearby-title">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="nearby-title">Find care near me</h2>
+        <button type="button" class="close" data-close aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="hint">
+          Your location is used only for this search and is not stored.
+          For an emergency, call 141 or 15 instead of searching.
+        </p>
+
+        <div class="row">
+          <label>Looking for
+            <select id="nearby-type">
+              <option value="all">Hospitals, clinics, pharmacies</option>
+              <option value="hospital">Hospitals</option>
+              <option value="clinic">Clinics and doctors</option>
+              <option value="pharmacy">Pharmacies</option>
+            </select>
+          </label>
+          <label>Within
+            <select id="nearby-radius">
+              <option value="3">3 km</option>
+              <option value="5">5 km</option>
+              <option value="10" selected>10 km</option>
+              <option value="25">25 km</option>
+            </select>
+          </label>
+        </div>
+
+        <button type="button" id="nearby-locate" class="primary-btn">Use my location</button>
+
+        <form id="nearby-city-form" class="row city-row">
+          <input id="nearby-city" type="text" placeholder="or type your city (e.g. Agadir)" aria-label="City" maxlength="100" />
+          <button type="submit" class="secondary-btn">Search</button>
+        </form>
+
+        <div id="nearby-status" class="status" aria-live="polite"></div>
+        <div id="nearby-results" class="places"></div>
+        <p class="attribution">Map data © OpenStreetMap contributors. It may be incomplete or out of date: phone ahead when you can.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report for my doctor -->
+  <div id="report-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="report-title">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="report-title">Report for my doctor</h2>
+        <button type="button" class="close" data-close aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="hint">
+          A summary of what you told the chat, which you can show or send to your doctor.
+          Name and age are optional and stay on your device.
+        </p>
+        <div class="row patient-fields">
+          <input id="pf-name" type="text" placeholder="Your name (optional)" aria-label="Name" maxlength="80" />
+          <input id="pf-age" type="text" placeholder="Age (optional)" aria-label="Age" maxlength="10" />
+        </div>
+        <div id="report-status" class="status" aria-live="polite"></div>
+        <article id="report-doc" class="report-doc hidden"></article>
+      </div>
+      <div class="modal-actions hidden" id="report-actions">
+        <button type="button" id="rp-copy" class="secondary-btn">Copy</button>
+        <button type="button" id="rp-print" class="secondary-btn">Save as PDF</button>
+        <button type="button" id="rp-share" class="secondary-btn hidden">Share</button>
+        <button type="button" id="rp-email" class="secondary-btn">Email</button>
+        <button type="button" id="rp-refresh" class="secondary-btn">Update</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <input type="file" id="file-input" accept="image/*,application/pdf" multiple hidden />
+
+  <script src="features.js"></script>
+  <script src="media.js"></script>
+</body>
+</html>
